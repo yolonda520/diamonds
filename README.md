@@ -27,14 +27,14 @@
 
 
 2. Columns
-| Index  | counter
-| carat  | Carat weight of the diamond
-| cut    | Describe cut quality of the diamond. Quality in increasing order Fair, Good, Very Good, Premium, Ideal
-| color  | Color of the diamond, with D being the best and J the worst
-| clarity| How obvious inclusions are within the diamond:(in order from best to worst, FL = flawless, I3= level 3 inclusions) FL,IF, VVS1, | VVS2, VS1, VS2, SI1, SI2, I1, I2, I3
-| depth  | depth % :The height of a diamond, measured from the culet to the table, divided by its average girdle diameter
-| table  | table%: The width of the diamond's table expressed as a percentage of its average diameter
-| price  | the price of the diamond
-| x      | length mm
-| y      | width mm
-| z      | depth mm
+| Index  | counter |
+| carat  | Carat weight of the diamond |
+| cut    | Describe cut quality of the diamond. Quality in increasing order Fair, Good, Very Good, Premium, Ideal |
+| color  | Color of the diamond, with D being the best and J the worst |
+| clarity| How obvious inclusions are within the diamond:(in order from best to worst, FL = flawless, I3= level 3 inclusions) FL,IF, VVS1, | VVS2, VS1, VS2, SI1, SI2, I1, I2, I3 |
+| depth  | depth % :The height of a diamond, measured from the culet to the table, divided by its average girdle diameter |
+| table  | table%: The width of the diamond's table expressed as a percentage of its average diameter |
+| price  | the price of the diamond |
+| x      | length mm |
+| y      | width mm |
+| z      | depth mm |
