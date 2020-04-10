@@ -38,5 +38,5 @@
 | table  | table%: The width of the diamond's table expressed as a percentage of its average diameter |
 | price  | the price of the diamond |
 | x      | length mm |
-| y      | width mm |
-| z      | depth mm |
+| y      | width mm  |
+| z      | depth mm  |
