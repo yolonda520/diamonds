@@ -27,6 +27,8 @@
 
 
 2. Columns
+| Syntax      | Description |
+| ----------- | ----------- |
 | Index  | counter |
 | carat  | Carat weight of the diamond |
 | cut    | Describe cut quality of the diamond. Quality in increasing order Fair, Good, Very Good, Premium, Ideal |
