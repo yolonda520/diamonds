@@ -27,6 +27,7 @@
 
 
 2. Columns
+
 | Syntax      | Description |
 | ----------- | ----------- |
 | Index  | counter |
