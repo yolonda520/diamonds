@@ -24,9 +24,8 @@
 
 - table width of top of diamond relative to widest point (43--95)
 
-AAAAAAAAAAAAAAAAAAAAAAAAA!!!!!!!!!!!!!!
-AAA!!!
-
+Date:2020/4/12 
+Author:Yu Huang
 2. Columns
 
 | Syntax      | Description |
