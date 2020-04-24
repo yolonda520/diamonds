@@ -283,25 +283,4 @@ print(diamonds['carat'][diamonds['color'] == 1].mean())
 # Insights:
 # It looks worst color has the higher weight, so the color 1 much more expensive than color 5,which is make sense.
 # We can see that the better cut,color, clarity diamonds always have light carat weight, base on carat weight is high related to price, so the price of high quality of cut,color, clarity is under the average.
-#  %%
-# diamonds_explanatory = diamonds.drop(['price','Unnamed: 0'],axis = 1)
-# diamonds_target      = diamonds.loc[:,'price']
-# # %% [markdown]
-# # # Training and testing data split
 
-# X_train, X_test, y_train, y_test = train_test_split(
-#             diamonds_explanatory,
-#             diamonds_target,
-#             test_size = 0.25,          #always use 0.25
-#             random_state = 222)
-
-# # %%
-# # Training set
-# print(X_train.shape)
-# print(y_train.shape)
-
-# # Testing set
-# print(X_test.shape)
-# print(y_test.shape)
-
-# %%
