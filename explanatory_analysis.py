@@ -1,11 +1,30 @@
+# %%
+# Check change in new branch -- predictive
 # %% [markdown]
 # # 1. Import Packages
 # %%
 # we import necessary packages as below.
 import pandas as pd
+import numpy as np
 import seaborn as sns
+import random as rand
 import matplotlib.pyplot as plt
 from IPython.display import display
+
+from sklearn.model_selection import train_test_split  # train/test split
+# linear regression (scikit-learn)
+from sklearn.linear_model import LinearRegression
+import sklearn.linear_model  # linear models
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import make_scorer
+from sklearn.metrics import roc_auc_score
+from sklearn.metrics import confusion_matrix    # confusion matrix
+
+from sklearn.neighbors import KNeighborsRegressor  # KNN for Regression
+from sklearn.preprocessing import StandardScaler  # standard scaler
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.ensemble import RandomForestRegressor
+# %%
 # setting pandas print options
 pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
@@ -23,7 +42,8 @@ diamonds.info()
 # %% [markdown]
 # Insight:<br>
 # 1.It looks no missing value here;<br>
-# 2.From the diamonds info, we can see 'cut','color','clarity' are objects.We will see what it is inside of the objects to find some relationship.<br>
+# 2.From the diamonds info, we can see 'cut','color','clarity' are objects.We
+# will see what it is inside of the objects to find some relationship.<br>
 # 3.'unnamed: 0' is index can be removed;<br>
 
 # %%
@@ -31,14 +51,17 @@ diamonds.info()
 diamonds.describe().round(2)
 # %% [markdown]
 # Insight:<br>
-# 1.The max carat weight is 5.01, far away from the mean 0.78. Is that some interesting thing that such a high weight?<br>
-# 2.The min of x,y,z, are 0! Which doesn't make sense that either length, height or width is zero! That would probably be missing value!<br>
+# 1.The max carat weight is 5.01, far away from the mean 0.78. Is that some
+# interesting thing that such a high weight?<br>
+# 2.The min of x,y,z, are 0! Which doesn't make sense that either length,
+#  height or width is zero! That would probably be missing value!<br>
 # %% [markdown]
 #  ## 2.2 Check data missing value and handle missing value
 # %%
 diamonds.isnull().sum()
 # %% [markdown]
-# As we mentioned before, it looks no missing value at all. However, let's check the x,y,z which is 0.
+# As we mentioned before, it looks no missing value at all. However, let's
+# check the x,y,z which is 0.
 
 # %%
 diamonds.loc[diamonds['x'] == 0].count()
@@ -85,34 +108,35 @@ clarity
 #   I1 is worst, IF is best.<br>
 
 # %%
+diamond = diamonds.copy()
 # Replace the categorical variables to number.
-diamonds.replace({'Fair': 1, 'Good': 2, 'Very Good': 3, 'Premium': 4, 'Ideal': 5,
-                  'J': 1, 'I': 2, 'H': 3, 'G': 4, 'F': 5, 'E': 6, 'D': 7,
-                  'I1': 1, 'SI2': 2, 'SI1': 3, 'VS2': 4, 'VS1': 5, 'VVS2': 6, 'VVS1': 7, 'IF': 8}, inplace=True)
-diamonds.head()
+diamond.replace({'Fair': 1, 'Good': 2, 'Very Good': 3, 'Premium': 4, 'Ideal': 5,
+                 'J': 1, 'I': 2, 'H': 3, 'G': 4, 'F': 5, 'E': 6, 'D': 7,
+                 'I1': 1, 'SI2': 2, 'SI1': 3, 'VS2': 4, 'VS1': 5, 'VVS2': 6, 'VVS1': 7, 'IF': 8}, inplace=True)
+diamond.head()
 
 # %% [markdown]
 # ## 2.4 Drop undesired  columns
 # %%
 # carat weight can totally explain the volume,x,y,z, so I prefer to drop x,y,z first.
-diamonds = diamonds.drop(['Unnamed: 0', 'x', 'y', 'z'], axis=1)
+diamond = diamond.drop(['Unnamed: 0', 'x', 'y', 'z'], axis=1)
 
-diamonds.shape
+diamond.shape
 # %%
-diamonds.head()
+diamond.head()
 # %% [markdown]
 # ## 2.5 Outliers Analysis
 # %%
 fig, ax = plt.subplots(nrows=2,
                        ncols=2,
                        figsize=(12, 12))
-sns.boxplot(y=diamonds['carat'],
+sns.boxplot(y=diamond['carat'],
             ax=ax[0, 0])
-sns.boxplot(y=diamonds['depth'],
+sns.boxplot(y=diamond['depth'],
             ax=ax[0, 1])
-sns.boxplot(y=diamonds['table'],
+sns.boxplot(y=diamond['table'],
             ax=ax[1, 0])
-sns.boxplot(y=diamonds['price'],
+sns.boxplot(y=diamond['price'],
             ax=ax[1, 1])
 plt.show()
 
@@ -128,7 +152,7 @@ plt.show()
 # # 3. Analysis Data
 # ## 3.1 Develop Pearson correlation matrix with data.
 # %%
-df_corr = diamonds.corr().round(2)
+df_corr = diamond.corr().round(2)
 print(df_corr.loc[:, 'price'].sort_values(ascending=False))
 # %% [markdown]
 # Insight:
@@ -142,21 +166,21 @@ print(df_corr.loc[:, 'price'].sort_values(ascending=False))
 fig, ax = plt.subplots(nrows=2,
                        ncols=2,
                        figsize=(12, 12))
-sns.distplot(diamonds['carat'],
+sns.distplot(diamond['carat'],
              bins=20,
              color='r',
              ax=ax[0, 0])
-sns.distplot(diamonds['depth'],
+sns.distplot(diamond['depth'],
              bins=20,
              color='g',
              ax=ax[0, 1])
 
-sns.distplot(diamonds['table'],
+sns.distplot(diamond['table'],
              bins=20,
              color='y',
              ax=ax[1, 0])
 
-sns.distplot(diamonds['price'],
+sns.distplot(diamond['price'],
              bins=20,
              color='b',
              ax=ax[1, 1])
@@ -166,22 +190,22 @@ plt.show()
 fig, ax = plt.subplots(nrows=2,
                        ncols=2,
                        figsize=(12, 12))
-sns.distplot(diamonds['cut'],
+sns.distplot(diamond['cut'],
              bins=20,
              color='r',
              ax=ax[0, 0])
 
-sns.distplot(diamonds['clarity'],
+sns.distplot(diamond['clarity'],
              bins=20,
              color='g',
              ax=ax[0, 1])
 
-sns.distplot(diamonds['color'],
+sns.distplot(diamond['color'],
              bins=20,
              color='y',
              ax=ax[1, 0])
 
-sns.distplot(diamonds['volume'],
+sns.distplot(diamond['volume'],
              bins=20,
              color='b',
              ax=ax[1, 1])
@@ -189,11 +213,11 @@ plt.tight_layout()
 plt.show()
 
 # %% [markdown]
-# Insight:
-# 1. The carat weight have 5 peaks, Probably there are popular weight like 1, 2.
-# 2. The cut high level always more popular than low levels;
-# 3. The clarity 3,4 are more popular than others,which 'SI1': 3, 'VS2': 4 are more popular;
-# 4. color 4 which is G more popular than others.
+# Insight:<br>
+# 1. The carat weight have 5 peaks, Probably there are popular weight like 1, 2.<br>
+# 2. The cut high level always more popular than low levels;<br>
+# 3. The clarity 3,4 are more popular than others,which 'SI1': 3, 'VS2': 4 are more popular;<br>
+# 4. color 4 which is G more popular than others.<br>
 
 # %% [markdown]
 # ### 3.2.2 Developing trend changes - Scatter plot
@@ -202,23 +226,23 @@ fig, ax = plt.subplots(nrows=2,
                        ncols=2,
                        figsize=(12, 12))
 
-sns.scatterplot(x=diamonds['carat'],
-                y=diamonds['price'],
+sns.scatterplot(x=diamond['carat'],
+                y=diamond['price'],
                 color='r',
                 ax=ax[0, 0])
 
-sns.scatterplot(x=diamonds['volume'],
-                y=diamonds['price'],
+sns.scatterplot(x=diamond['volume'],
+                y=diamond['price'],
                 color='y',
                 ax=ax[0, 1])
 
-sns.scatterplot(x=diamonds['table'],
-                y=diamonds['price'],
+sns.scatterplot(x=diamond['table'],
+                y=diamond['price'],
                 color='g',
                 ax=ax[1, 0])
 
-sns.scatterplot(x=diamonds['depth'],
-                y=diamonds['price'],
+sns.scatterplot(x=diamond['depth'],
+                y=diamond['price'],
                 color='b',
                 ax=ax[1, 1])
 plt.tight_layout()
@@ -228,18 +252,18 @@ fig, ax = plt.subplots(nrows=1,
                        ncols=3,
                        figsize=(12, 6))
 
-sns.scatterplot(x=diamonds['cut'],
-                y=diamonds['price'],
+sns.scatterplot(x=diamond['cut'],
+                y=diamond['price'],
                 color='r',
                 ax=ax[0])
 
-sns.scatterplot(x=diamonds['color'],
-                y=diamonds['price'],
+sns.scatterplot(x=diamond['color'],
+                y=diamond['price'],
                 color='y',
                 ax=ax[1])
 
-sns.scatterplot(x=diamonds['clarity'],
-                y=diamonds['price'],
+sns.scatterplot(x=diamond['clarity'],
+                y=diamond['price'],
                 color='g',
                 ax=ax[2])
 plt.tight_layout()
@@ -251,17 +275,17 @@ fig, ax = plt.subplots(nrows=1,
                        ncols=3,
                        figsize=(12, 6))
 
-sns.barplot(x=diamonds['cut'],
-            y=diamonds['price'],
+sns.barplot(x=diamond['cut'],
+            y=diamond['price'],
             color='r',
             ax=ax[0])
 
-sns.barplot(x=diamonds['color'],
-            y=diamonds['price'],
+sns.barplot(x=diamond['color'],
+            y=diamond['price'],
             color='y',
             ax=ax[1])
-sns.barplot(x=diamonds['clarity'],
-            y=diamonds['price'],
+sns.barplot(x=diamond['clarity'],
+            y=diamond['price'],
             color='g',
             ax=ax[2])
 
@@ -273,11 +297,11 @@ sns.barplot(x=diamonds['clarity'],
 # 3. clarity 2 is the best price, which is weird too, as the clarity 2 is not a good level.
 
 # %%
-print(diamonds['price'][diamonds['color'] == 5].mean())
-print(diamonds['carat'][diamonds['color'] == 5].mean())
+print(diamond['price'][diamond['color'] == 5].mean())
+print(diamond['carat'][diamond['color'] == 5].mean())
 # %%
-print(diamonds['price'][diamonds['color'] == 1].mean())
-print(diamonds['carat'][diamonds['color'] == 1].mean())
+print(diamond['price'][diamond['color'] == 1].mean())
+print(diamond['carat'][diamond['color'] == 1].mean())
 
 # %% [markdown]
 # Insights:
