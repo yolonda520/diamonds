@@ -14,7 +14,7 @@ from IPython.display import display
 
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-import sklearn.linear_model 
+import sklearn.linear_model
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import make_scorer
 from sklearn.metrics import roc_auc_score
@@ -47,6 +47,7 @@ display(diamonds.shape)
 ########################################
 # optimal_neighbors
 ########################################
+
 
 def optimal_neighbors(X_data,
                       y_data,
@@ -260,7 +261,7 @@ X_scaled_df.columns = diamonds_explanatory.columns
 X_train, X_test, y_train, y_test = train_test_split(
     X_scaled_df,
     diamonds_target,
-    test_size=0.25,  
+    test_size=0.25,
     random_state=222)
 
 # Training set
@@ -285,17 +286,18 @@ model_performance
 # %% [markdown]
 # ## 5.1 KNN Classification Model
 # %%
-opt_neighbors = optimal_neighbors(diamonds_explanatory,
-                                  diamonds_target,
-                                  standardize=True,
-                                  pct_test=0.25,
-                                  seed=222,
-                                  response_type='class',
-                                  max_neighbors=10,
-                                  show_viz=True)
+# opt_neighbors = optimal_neighbors(diamonds_explanatory,
+#                                   diamonds_target,
+#                                   standardize=True,
+#                                   pct_test=0.25,
+#                                   seed=222,
+#                                   response_type='class',
+#                                   max_neighbors=10,
+#                                   show_viz=True)
 # %%
 # INSTANTIATING a model with the optimal number of neighbors
-knn_opt = KNeighborsClassifier(n_neighbors=opt_neighbors)
+# To save running time, I manually input the opt_neighbor
+knn_opt = KNeighborsClassifier(n_neighbors=7)
 
 
 # FITTING the model based on the training data
@@ -336,7 +338,7 @@ model_performance
 
 # %%
 # # GridSearchCV
-# I commented the process as it took a long time to run, I just record the results.   
+# I commented the process as it took a long time to run, I just record the results.
 # ########################################
 
 # # declaring a hyperparameter space (give GridSearch some values to loop over)
@@ -527,65 +529,65 @@ model_performance
 # %% [markdown]
 # ## 5.4 Random Forest Classification on Hyperparameter Tuning with GridSearchCV
 # %%
-# ########################################
-# # GridSearchCV
-# ########################################
+# # ########################################
+# # # GridSearchCV
+# # ########################################
 
-# declaring a hyperparameter space
-estimator_space = pd.np.arange(10, 500, 20)
-leaf_space = pd.np.arange(1, 31, 10)
-criterion_space = ['gini', 'entropy']
-bootstrap_space = [True, False]
-warm_start_space = [True, False]
-
-
-# creating a hyperparameter grid
-param_grid = {'n_estimators': estimator_space,
-              'min_samples_leaf': leaf_space,
-              'criterion': criterion_space,
-              'bootstrap': bootstrap_space,
-              'warm_start': warm_start_space}
+# # declaring a hyperparameter space
+# estimator_space = pd.np.arange(10, 200, 20)
+# leaf_space = pd.np.arange(1, 31, 10)
+# criterion_space = ['gini', 'entropy']
+# bootstrap_space = [True, False]
+# warm_start_space = [True, False]
 
 
-# INSTANTIATING the model object without hyperparameters
-forest_grid = RandomForestClassifier(random_state=222)
+# # creating a hyperparameter grid
+# param_grid = {'n_estimators': estimator_space,
+#               'min_samples_leaf': leaf_space,
+#               'criterion': criterion_space,
+#               'bootstrap': bootstrap_space,
+#               'warm_start': warm_start_space}
 
 
-# GridSearchCV object
-forest_cv = GridSearchCV(estimator=forest_grid,
-                         param_grid=param_grid,
-                         cv=3,
-                         scoring=make_scorer(roc_auc_score,
-                                             needs_threshold=False))
+# # INSTANTIATING the model object without hyperparameters
+# forest_grid = RandomForestClassifier(random_state=222)
 
 
-# FITTING to the FULL DATASET (due to cross-validation)
-forest_cv.fit(diamonds_explanatory, diamonds_target)
+# # GridSearchCV object
+# forest_cv = GridSearchCV(estimator=forest_grid,
+#                          param_grid=param_grid,
+#                          cv=3,
+#                          scoring=make_scorer(roc_auc_score,
+#                                              needs_threshold=False))
 
-# printing the optimal parameters and best score
-print("Tuned Parameters  :", full_forest_cv.best_params_)
-print("Tuned Training AUC:", full_forest_cv.best_score_.round(4))
-# %%
-# Record the result of LogisticRegression Model best parameters
-print(f"""
-/--------------------------\\
-|RandomForestClassifier Model |
-\\--------------------------/
 
-Best parameters and best AUC score:
------------
-Tuned Parameters  : 
-'bootstrap': False, 'criterion': 'gini', 'min_samples_leaf': 1, 'n_estimators': 100, 'warm_start': True
+# # FITTING to the FULL DATASET (due to cross-validation)
+# forest_cv.fit(diamonds_explanatory, diamonds_target)
 
-chef_full Tuned AUC      : 
- 0.6363
+# # printing the optimal parameters and best score
+# print("Tuned Parameters  :", full_forest_cv.best_params_)
+# print("Tuned Training AUC:", full_forest_cv.best_score_.round(4))
+# # %%
+# # Record the result of LogisticRegression Model best parameters
+# print(f"""
+# /--------------------------\\
+# |RandomForestClassifier Model |
+# \\--------------------------/
 
-""")
+# Best parameters and best AUC score:
+# -----------
+# Tuned Parameters  :
+# 'bootstrap': False, 'criterion': 'gini', 'min_samples_leaf': 1, 'n_estimators': 100, 'warm_start': True
+
+# chef_full Tuned AUC      :
+#  0.6363
+
+# """)
 # %%
 # INSTANTIATING the model object with tuned values
 rf_tuned = RandomForestClassifier(bootstrap=False,
                                   criterion='gini',
-                                  min_samples_leaf=1,
+                                  min_samples_leaf=30,
                                   n_estimators=100,
                                   warm_start=True,
                                   random_state=222)
@@ -622,62 +624,62 @@ model_performance
 # %% [markdown]
 # ## 5.5 Gradient Boosted Machines Classification on Hyperparameter Tuning with GridSearchCV
 # %%
-########################################
-# GridSearchCV
-########################################
+# ########################################
+# # GridSearchCV
+# ########################################
 
-# declaring a hyperparameter space
-learn_space = pd.np.arange(0.1, 1.1, 0.1)
-estimator_space = pd.np.arange(50, 150, 50)
-depth_space = pd.np.arange(1, 10)
-subsample_space = pd.np.arange(0.2, 1, 0.1)
+# # declaring a hyperparameter space
+# learn_space = pd.np.arange(0.1, 1.1, 0.1)
+# estimator_space = pd.np.arange(50, 150, 50)
+# depth_space = pd.np.arange(1, 10)
+# subsample_space = pd.np.arange(0.2, 1, 0.1)
 
-# creating a hyperparameter grid
-param_grid = {'learning_rate': learn_space,
-              'max_depth': depth_space,
-              'n_estimators': estimator_space,
-              'subsample': subsample_space}
-
-
-# INSTANTIATING the model object without hyperparameters
-gbm_grid = GradientBoostingClassifier(random_state=222)
+# # creating a hyperparameter grid
+# param_grid = {'learning_rate': learn_space,
+#               'max_depth': depth_space,
+#               'n_estimators': estimator_space,
+#               'subsample': subsample_space}
 
 
-# GridSearchCV object
-gbm_cv = GridSearchCV(estimator=gbm_grid,
-                      param_grid=param_grid,
-                      cv=3,
-                      scoring=make_scorer(roc_auc_score,
-                                          needs_threshold=False))
+# # INSTANTIATING the model object without hyperparameters
+# gbm_grid = GradientBoostingClassifier(random_state=222)
 
 
-# FITTING to the FULL DATASET (due to cross-validation)
-gbm_cv.fit(diamonds_explanatory, diamonds_target)
+# # GridSearchCV object
+# gbm_cv = GridSearchCV(estimator=gbm_grid,
+#                       param_grid=param_grid,
+#                       cv=3,
+#                       scoring=make_scorer(roc_auc_score,
+#                                           needs_threshold=False))
 
-# printing the optimal parameters and best score
-print("Tuned Parameters  :", full_gbm_cv.best_params_)
-print("Tuned Training AUC:", full_gbm_cv.best_score_.round(4))
+
+# # FITTING to the FULL DATASET (due to cross-validation)
+# gbm_cv.fit(diamonds_explanatory, diamonds_target)
+
+# # printing the optimal parameters and best score
+# print("Tuned Parameters  :", full_gbm_cv.best_params_)
+# print("Tuned Training AUC:", full_gbm_cv.best_score_.round(4))
+# # %%
+# # Record the result of LogisticRegression Model best parameters
+# print("""
+# /--------------------------\\
+# |Gradient Boosted Machines Model |
+# \\--------------------------/
+
+# Best parameters and best AUC score:
+# -----------
+# Tuned Parameters  :
+# 'learning_rate': 1.0000000000000002, 'max_depth': 1, 'n_estimators': 50, 'subsample': 0.5
+
+# Tuned AUC      :
+# 0.655
+
+# """)
 # %%
-# Record the result of LogisticRegression Model best parameters
-print("""
-/--------------------------\\
-|Gradient Boosted Machines Model |
-\\--------------------------/
-
-Best parameters and best AUC score:
------------
-Tuned Parameters  : 
-'learning_rate': 1.0000000000000002, 'max_depth': 1, 'n_estimators': 50, 'subsample': 0.5
-
-Tuned AUC      : 
-0.655
-
-""")
-# %%
 # INSTANTIATING the model object without hyperparameters
-gbm_tuned = GradientBoostingClassifier(learning_rate=0.2,
-                                       max_depth=1,
-                                       n_estimators=50,
+gbm_tuned = GradientBoostingClassifier(learning_rate=0.1,
+                                       max_depth=3,
+                                       n_estimators=100,
                                        subsample=0.5,
                                        random_state=222)
 
@@ -712,59 +714,59 @@ model_performance
 # %% [markdown]
 # ## 5.6 Support Vector Machine Classification on Hyperparameter Tuning with GridSearchCV
 # %%
-########################################
-# GridSearchCV
-########################################
+# ########################################
+# # GridSearchCV
+# ########################################
 
-# declaring a hyperparameter space
-C_space = [1e-3, 1e-2, 1e-1, 0.8, 1, 10, 100]  # pd.np.arange(0.1,10,0.1)
-gamma_space = [0.5, 0.1, 0.01, 0.001, 0.0001]
-kernel_space = ['linear', 'rbf']
-# depth_space     = pd.np.arange(1, 10)
-# subsample_space = pd.np.arange(0.5,1,0.1)
+# # declaring a hyperparameter space
+# C_space = [1e-3, 1e-2, 1e-1, 0.8, 1, 10, 100]  # pd.np.arange(0.1,10,0.1)
+# gamma_space = [0.5, 0.1, 0.01, 0.001, 0.0001]
+# kernel_space = ['linear', 'rbf']
+# # depth_space     = pd.np.arange(1, 10)
+# # subsample_space = pd.np.arange(0.5,1,0.1)
 
-# creating a hyperparameter grid
-param_grid = {'C': C_space,
-              'gamma': gamma_space,
-              'kernel': kernel_space}
-
-
-# INSTANTIATING the model object without hyperparameters
-svc_grid = SVC(random_state=222)
+# # creating a hyperparameter grid
+# param_grid = {'C': C_space,
+#               'gamma': gamma_space,
+#               'kernel': kernel_space}
 
 
-# GridSearchCV object
-svc_cv = GridSearchCV(estimator=svc_grid,
-                      param_grid=param_grid,
-                      cv=3,
-                      n_jobs=8,
-                      verbose=1,
-                      scoring=make_scorer(roc_auc_score,
-                                          needs_threshold=False))
+# # INSTANTIATING the model object without hyperparameters
+# svc_grid = SVC(random_state=222)
 
 
-# FITTING to the FULL DATASET (due to cross-validation)
-svc_cv.fit(diamonds_explanatory, diamonds_target)
+# # GridSearchCV object
+# svc_cv = GridSearchCV(estimator=svc_grid,
+#                       param_grid=param_grid,
+#                       cv=3,
+#                       n_jobs=8,
+#                       verbose=1,
+#                       scoring=make_scorer(roc_auc_score,
+#                                           needs_threshold=False))
 
-# printing the optimal parameters and best score
-print("Tuned Parameters  :", svc_cv.best_params_)
-print("Tuned Training AUC:", svc_cv.best_score_.round(4))
-# %%
-# Record the result of LogisticRegression Model best parameters
-print(f"""
-/--------------------------\\
-|Support Vector Machine Model |
-\\--------------------------/
 
-Full explanatory variables best parameters and best AUC score:
------------
- Tuned Parameters  : 
-'C': 100, 'gamma': 0.01, 'kernel': 'rbf'
+# # FITTING to the FULL DATASET (due to cross-validation)
+# svc_cv.fit(diamonds_explanatory, diamonds_target)
 
-Tuned AUC      : 
- 0.6279
+# # printing the optimal parameters and best score
+# print("Tuned Parameters  :", svc_cv.best_params_)
+# print("Tuned Training AUC:", svc_cv.best_score_.round(4))
+# # %%
+# # Record the result of LogisticRegression Model best parameters
+# print(f"""
+# /--------------------------\\
+# |Support Vector Machine Model |
+# \\--------------------------/
 
-""")
+# Full explanatory variables best parameters and best AUC score:
+# -----------
+#  Tuned Parameters  :
+# 'C': 100, 'gamma': 0.01, 'kernel': 'rbf'
+
+# Tuned AUC      :
+#  0.6279
+
+# """)
 # %%
 # INSTANTIATING the model object with tuned values
 svc_tuned = SVC(C=0.01,
@@ -808,3 +810,13 @@ model_performance.round(3)
 # comparing results
 
 model_performance.round(3)
+
+# %% [markdown]
+# <strong> Insights:<br>
+# Compare 6 different models above, we can see Random Forest Model has the best performance. <br>
+# Training ACCURACY: 0.9182 <br>
+# Testing  ACCURACY: 0.9118 <br>
+# AUC Score        : 0.9144 <br>
+# I will choose Random Forest Model for the prediction.
+
+# %%
