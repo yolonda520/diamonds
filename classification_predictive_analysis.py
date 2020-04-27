@@ -14,7 +14,7 @@ from IPython.display import display
 
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-import sklearn.linear_model 
+import sklearn.linear_model
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import make_scorer
 from sklearn.metrics import roc_auc_score
@@ -47,6 +47,7 @@ display(diamonds.shape)
 ########################################
 # optimal_neighbors
 ########################################
+
 
 def optimal_neighbors(X_data,
                       y_data,
@@ -260,7 +261,7 @@ X_scaled_df.columns = diamonds_explanatory.columns
 X_train, X_test, y_train, y_test = train_test_split(
     X_scaled_df,
     diamonds_target,
-    test_size=0.25,  
+    test_size=0.25,
     random_state=222)
 
 # Training set
@@ -295,7 +296,8 @@ model_performance
 #                                   show_viz=True)
 # %%
 # INSTANTIATING a model with the optimal number of neighbors
-knn_opt = KNeighborsClassifier(n_neighbors=7) # To save running time, I manually input the opt_neighbor
+# To save running time, I manually input the opt_neighbor
+knn_opt = KNeighborsClassifier(n_neighbors=7)
 
 
 # FITTING the model based on the training data
@@ -336,7 +338,7 @@ model_performance
 
 # %%
 # # GridSearchCV
-# I commented the process as it took a long time to run, I just record the results.   
+# I commented the process as it took a long time to run, I just record the results.
 # ########################################
 
 # # declaring a hyperparameter space (give GridSearch some values to loop over)
@@ -533,7 +535,7 @@ model_performance
 
 # # declaring a hyperparameter space
 # estimator_space = pd.np.arange(10, 200, 20)
-# leaf_space = pd.np.arange(1, 31, 10)  
+# leaf_space = pd.np.arange(1, 31, 10)
 # criterion_space = ['gini', 'entropy']
 # bootstrap_space = [True, False]
 # warm_start_space = [True, False]
@@ -574,10 +576,10 @@ model_performance
 
 # Best parameters and best AUC score:
 # -----------
-# Tuned Parameters  : 
+# Tuned Parameters  :
 # 'bootstrap': False, 'criterion': 'gini', 'min_samples_leaf': 1, 'n_estimators': 100, 'warm_start': True
 
-# chef_full Tuned AUC      : 
+# chef_full Tuned AUC      :
 #  0.6363
 
 # """)
@@ -666,10 +668,10 @@ model_performance
 
 # Best parameters and best AUC score:
 # -----------
-# Tuned Parameters  : 
+# Tuned Parameters  :
 # 'learning_rate': 1.0000000000000002, 'max_depth': 1, 'n_estimators': 50, 'subsample': 0.5
 
-# Tuned AUC      : 
+# Tuned AUC      :
 # 0.655
 
 # """)
@@ -758,10 +760,10 @@ model_performance
 
 # Full explanatory variables best parameters and best AUC score:
 # -----------
-#  Tuned Parameters  : 
+#  Tuned Parameters  :
 # 'C': 100, 'gamma': 0.01, 'kernel': 'rbf'
 
-# Tuned AUC      : 
+# Tuned AUC      :
 #  0.6279
 
 # """)
